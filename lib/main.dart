@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:jsonstorage/fileobj.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,8 +36,54 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+    FileOp fp = new FileOp(filename: "smaple2.json");
+
   TextEditingController keyController = new TextEditingController();
   TextEditingController valueController = new TextEditingController();
+  TextEditingController value2Controller = new TextEditingController();
+
+  File jsonfile;
+  Directory dir;
+  String fileName = "samplejson.json";
+  bool fileExist = false;
+  Map<String, dynamic> fileContent;
+
+  
+  // @override
+  // void initState() {
+  //   getApplicationDocumentsDirectory().then((Directory directory) {
+  //       dir = directory;
+  //       jsonfile = new File(dir.path + "/" + fileName);
+  //       fileExist = jsonfile.existsSync();
+  //       if (fileExist)  this.setState(() => fileContent = json.decode(jsonfile.readAsStringSync()));
+  //   });
+  //   super.initState();
+  // }
+
+  // void writeToFile(String key, String value){
+  //   print("Printing to a file");
+  //   Map<String, dynamic> content = {key: value};
+  //   if(fileExist){
+  //     Map<String, dynamic> jsonContent = json.decode(jsonfile.readAsStringSync());
+  //     jsonContent.addAll(content);
+  //     jsonfile.writeAsStringSync(json.encode(jsonContent));
+  //   }
+  //   else{
+  //     print("file doesn't exist");
+  //     createFile(content);
+  //   }
+  //   this.setState(() => fileContent = json.decode(jsonfile.readAsStringSync()));
+  // }
+
+
+  // File createFile(Map<String, dynamic> content){
+  //     print("Creating a file");
+  //     File file = new File(dir.path + "/" + fileName);
+  //     file.createSync();
+  //     fileExist = true;
+  //     file.writeAsStringSync(json.encode(content));
+  //     return file;
+  // }
 
 
   @override
@@ -50,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
         children: <Widget>[
           new Text("Something something"),
-          new Text("Something something"),
+          new Text(fileContent.toString()),
           new Text("Something something"),
 
           new Padding(padding: EdgeInsets.all(8)),
@@ -63,11 +111,38 @@ class _MyHomePageState extends State<MyHomePage> {
             controller: valueController,
           ),
 
+          new TextField(
+            controller: value2Controller,
+          ),
+
           new Padding(padding: EdgeInsets.all(8)),
 
           new RaisedButton(
             child: Text("Add key, value pair"),
-            onPressed: (){}
+            onPressed: () async {                  
+
+                  // writeToFile(keyController.text , valueController.text);
+              print(fp.jsonfile.existsSync());
+              fp.createFile();
+              fp.writeToFile({
+                "post": {
+                  "endpoint": keyController.text,
+                  "data": [
+                    {
+                      valueController.text: value2Controller.text
+                    },
+                  ],
+                },
+
+              });
+
+              setState(() {
+                fileContent = json.decode(fp.jsonfile.readAsStringSync());
+              });
+
+              
+
+            }
             
             )
 
