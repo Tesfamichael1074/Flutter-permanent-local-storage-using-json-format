@@ -121,7 +121,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text("Add key, value pair"),
             onPressed: () async {                  
 
-                  // writeToFile(keyController.text , valueController.text);
               print(fp.jsonfile.existsSync());
               fp.createFile();
               fp.writeToFile({
